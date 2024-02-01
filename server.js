@@ -11,8 +11,8 @@ const port = 4000;
 const CLIENT_ID = '05b8fef3db2a5766094f';
 const CLIENT_SECRET = '37eb40dbeeeba6a32c893c78a3dd34218b3bfb48';
 
-app.use(cors);
-app.use(bodyParser.json);
+app.use(cors());
+app.use(bodyParser.json());
 
 app.get('/getAccessToken', async function (req, res) {
   req.query.code;
