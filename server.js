@@ -1,69 +1,49 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const { exec } = require('child_process');
-
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const passport = require("passport");
+const authRoute = require("./routes/auth");
+const cookieSession = require("cookie-session");
+const passportStrategy = require("./config/passport");
 const app = express();
-const port = 4000;
+const session = require("express-session");
 
-const CLIENT_ID = '05b8fef3db2a5766094f';
-const CLIENT_SECRET = '37eb40dbeeeba6a32c893c78a3dd34218b3bfb48';
+app.use(
+	session({
+		secret: "cloud-secure-server", // Choisissez une clé secrète forte ici
+		resave: true,
+		saveUninitialized: true,
+		cookie: {
+			maxAge: 24 * 60 * 60 * 1000, // Durée de vie du cookie en millisecondes (1 jour dans cet exemple)
+			httpOnly: false, // Si true, le cookie n'est accessible que via le protocole HTTP
+		},
+	})
+);
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.get('/getAccessToken', async function (req, res) {
-  req.query.code;
-  const params = "?client_id=" + CLIENT_ID + "&client_secret=" +CLIENT_SECRET + "&code=" + req.query.code;
-  await fetch('https://github.com/login/oauth/access_token' + params, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json"
-    }
-  }).then((response) => {
-    return response.json();
-  }).then((data) => {
-    res.json(data);
-  })
-})
+app.use(
+	cors({
+		origin: "http://localhost:3000",
+		methods: "GET,POST,PUT,DELETE",
+		credentials: true,
+	})
+);
 
-app.get('/getUserData', async function (req, res) {
-  req.get('Authorization')
-  await fetch('https://api.github.com/user', {
-    method: "GET",
-    headers: {
-      "Authorization": req.get("Authorization")
-    }
-  }).then((response) => {
-    return response.json();
-  }).then((data) => {
-    console.log(data);
-    res.json(data);
-  })
-})
+app.use("/auth", authRoute);
 
-app.get('/test', (req, res) => {
-  res.status(200).send('test recu');
-})
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ error: 'Unauthorized' });
+};
 
-// Endpoint pour le déploiement
-app.post('/deploy', (req, res) => {
-  const scriptName = 'deploy-back.sh';
-
-  exec(`bash ${scriptName}`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Erreur d'exécution du script : ${error}`);
-      res.status(500).send('Erreur d\'exécution du script');
-    } else {
-      console.log(`Sortie du script : ${stdout}`);
-      res.status(200).send('Script exécuté avec succès');
-    }
-  });
+app.post('/deploy', isAuthenticated, (req, res) => {
+  // Vous pouvez exécuter votre script de déploiement ici
+  res.status(200).json({ message: 'Deployment successful' });
 });
 
-app.listen(port, () => {
-    console.log(`Serveur en cours d'écoute sur le port ${port}`);
-});
-
+const port = process.env.PORT || 4000;
+app.listen(port, () => console.log(`Listenting on port ${port}...`));
