@@ -12,11 +12,7 @@ const deployScript = (scriptPath, res) => {
     // Capture les logs de sortie
     deployProcess.stdout.on('data', data => {
         console.log('Deployment log:', data);
-        // Vérifie si la réponse a déjà été envoyée
-        if (!res.headersSent) {
-            // Si la réponse n'a pas encore été envoyée, envoie les données à l'application React
-            res.write(data);
-        }
+        res.write(data);
     });
 
     // Gère les erreurs de script
