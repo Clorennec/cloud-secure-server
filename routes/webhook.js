@@ -13,3 +13,5 @@ router.post('/github/deploy/front', (req, res) => {
     exec(`sh /opt/app/front/scripts/deploy-front.sh`);
     res.sendStatus(200);
 });
+
+module.exports = router;
