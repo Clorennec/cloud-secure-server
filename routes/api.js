@@ -30,7 +30,7 @@ const deployScript = (scriptPath, res) => {
             res.status(500).json({ error: errorData });
         } else {
             // Sinon, envoie une réponse avec le statut 200 et un message de succès
-            res.status(200).json({ message: 'Deployment successful' });
+            res.json({ message: 'Deployment successful' });
         }
         // Signale la fin de l'exécution à l'application React
         res.end();
