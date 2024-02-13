@@ -9,6 +9,7 @@ const app = express();
 const session = require("express-session");
 const Docker = require("dockerode");
 const api = require("./routes/api");
+const webhook = require("./routes/webhook");
 
 app.use(
 	session({
@@ -44,6 +45,8 @@ const isAuthenticated = (req, res, next) => {
 };
 
 app.use("/api", isAuthenticated, api);
+
+app.use("/webhook", webhook);
 
 app.post('/deploy', (req, res) => {
   // Vous pouvez exécuter votre script de déploiement ici
