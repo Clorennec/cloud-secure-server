@@ -8,6 +8,7 @@ const passportStrategy = require("./config/passport");
 const app = express();
 const session = require("express-session");
 const Docker = require("dockerode");
+const api = require("./routes/api");
 
 app.use(
 	session({
@@ -33,6 +34,8 @@ app.use(
 );
 
 app.use("/auth", authRoute);
+
+app.use("/api", isAuthenticated, api);
 
 const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
