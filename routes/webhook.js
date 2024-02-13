@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Route pour recevoir le webhook GitHub pour le déploiement du backend
 router.post('/github/deploy/back', (req, res) => {
-    exec(`sh /opt/app/front/scripts/deploy-back.sh`);
+    exec(`sh /opt/app/back/scripts/deploy-back.sh`);
     res.sendStatus(200);
 });
 
