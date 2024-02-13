@@ -35,7 +35,6 @@ app.use(
 
 app.use("/auth", authRoute);
 
-app.use("/api", isAuthenticated, api);
 
 const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -43,6 +42,8 @@ const isAuthenticated = (req, res, next) => {
   }
   res.status(401).json({ error: 'Unauthorized' });
 };
+
+app.use("/api", isAuthenticated, api);
 
 app.post('/deploy', (req, res) => {
   // Vous pouvez exécuter votre script de déploiement ici
