@@ -15,7 +15,7 @@ router.post('/deploy/front', (req, res) => {
 router.get('/status/front', async (req, res) => {
     try {
         // Appel de la fonction pour vérifier l'état du conteneur
-        const isRunning = await checkContainerStatus("front-1");
+        const isRunning = await checkContainerStatus("/front-1");
         
         // Envoi de la réponse avec l'état du conteneur
         res.json({ isRunning });
@@ -28,7 +28,7 @@ router.get('/status/front', async (req, res) => {
 router.get('/status/back', async (req, res) => {
     try {
         // Appel de la fonction pour vérifier l'état du conteneur
-        const isRunning = await checkContainerStatus("back-1");
+        const isRunning = await checkContainerStatus("/back-1");
         
         // Envoi de la réponse avec l'état du conteneur
         res.json({ isRunning });

@@ -52,25 +52,5 @@ app.post('/deploy', (req, res) => {
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
-// Route pour vérifier l'état des conteneurs Docker
-app.get('/api/checkContainers', async (req, res) => {
-    try {
-        // Liste tous les conteneurs en cours d'exécution
-        const containers = await docker.listContainers({ all: true });
-
-        // Filtrer les conteneurs pour ceux qui sont en cours d'exécution
-        const runningContainers = containers.filter(container => container.State === 'running');
-
-        // Renvoyer les noms des conteneurs en cours d'exécution
-        const runningContainerNames = runningContainers.map(container => container.Names);
-
-        // Renvoyer les noms des conteneurs en tant que réponse
-        res.json({ runningContainers: runningContainerNames });
-    } catch (error) {
-        console.error('Error checking container status:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listenting on port ${port}...`));
