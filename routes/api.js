@@ -7,35 +7,31 @@ const deployScript = (scriptPath, res) => {
     // Exécute le script de déploiement
     const deployProcess = exec(`sh ${scriptPath}`);
 
-    let errorData = ''; // Variable pour stocker les données d'erreur
+    let outputData = ''; // Variable pour stocker les données de sortie et d'erreur
 
     // Capture les logs de sortie
     deployProcess.stdout.on('data', data => {
         console.log('Deployment log:', data);
-        res.write(data);
+        outputData += data;
     });
 
     // Gère les erreurs de script
     deployProcess.stderr.on('data', error => {
         console.error('Deployment error:', error);
-        // Ajoute les données d'erreur à la variable errorData
-        res.write(error);
+        // Ajoute les données d'erreur à la variable de sortie
+        outputData += error;
     });
 
     // Fin de l'exécution du script
     deployProcess.on('close', code => {
         console.log('Deployment process exited with code', code);
-        // Si des erreurs sont survenues, envoie une réponse avec le statut 500 et les données d'erreur
-        if (errorData) {
-            res.status(500).json({ error: errorData });
-        } else {
-            // Sinon, envoie une réponse avec le statut 200 et un message de succès
-            res.json({ message: 'Deployment successful' });
-        }
+        // Envoie une réponse avec les données de sortie et d'erreur une fois que l'exécution du script est terminée
+        res.status(code === 0 ? 200 : 500).json({ output: outputData });
         // Signale la fin de l'exécution à l'application React
         res.end();
     });
 };
+
 
 router.post('/deploy/back', (req, res) => {
     deployScript('/opt/app/back/scripts/deploy-back.sh', res);
