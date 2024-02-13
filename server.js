@@ -7,6 +7,7 @@ const cookieSession = require("cookie-session");
 const passportStrategy = require("./config/passport");
 const app = express();
 const session = require("express-session");
+const Docker = require("dockerode");
 
 app.use(
 	session({
@@ -40,9 +41,31 @@ const isAuthenticated = (req, res, next) => {
   res.status(401).json({ error: 'Unauthorized' });
 };
 
-app.post('/deploy', isAuthenticated, (req, res) => {
+app.post('/deploy', (req, res) => {
   // Vous pouvez exécuter votre script de déploiement ici
   res.status(200).json({ message: 'Deployment successful' });
+});
+
+const docker = new Docker({ socketPath: '/var/run/docker.sock' });
+
+// Route pour vérifier l'état des conteneurs Docker
+app.get('/api/checkContainers', async (req, res) => {
+    try {
+        // Liste tous les conteneurs en cours d'exécution
+        const containers = await docker.listContainers({ all: true });
+
+        // Filtrer les conteneurs pour ceux qui sont en cours d'exécution
+        const runningContainers = containers.filter(container => container.State === 'running');
+
+        // Renvoyer les noms des conteneurs en cours d'exécution
+        const runningContainerNames = runningContainers.map(container => container.Names);
+
+        // Renvoyer les noms des conteneurs en tant que réponse
+        res.json({ runningContainers: runningContainerNames });
+    } catch (error) {
+        console.error('Error checking container status:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 const port = process.env.PORT || 4000;
