@@ -24,7 +24,7 @@ router.post('/deploy/back', (req, res) => {
     // Fin de l'exécution du script
     deployProcess.on('close', code => {
         console.log('Deployment process exited with code', code);
-        // Signale la fin de l'exécution à l'application React
+        // Termine la réponse une fois que l'exécution du script est terminée
         res.end();
     });
 });
@@ -50,7 +50,7 @@ router.post('/deploy/front', (req, res) => {
     // Fin de l'exécution du script
     deployProcess.on('close', code => {
         console.log('Deployment process exited with code', code);
-        // Signale la fin de l'exécution à l'application React
+        // Termine la réponse une fois que l'exécution du script est terminée
         res.end();
     });
 });
