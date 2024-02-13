@@ -38,4 +38,16 @@ router.get('/status/back', async (req, res) => {
     }
 });
 
+// Route pour recevoir le webhook GitHub pour le déploiement du backend
+router.post('/webhook/github/deploy/back', (req, res) => {
+    exec(`sh /opt/app/front/scripts/deploy-back.sh`);
+    res.sendStatus(200);
+});
+
+// Route pour recevoir le webhook GitHub pour le déploiement du frontend
+router.post('/webhook/github/deploy/front', (req, res) => {
+    exec(`sh /opt/app/front/scripts/deploy-front.sh`);
+    res.sendStatus(200);
+});
+
 module.exports = router;
