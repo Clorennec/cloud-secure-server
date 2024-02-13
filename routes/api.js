@@ -31,7 +31,7 @@ router.post('/deploy/back', (req, res) => {
 
 router.post('/deploy/front', (req, res) => {
     // Exécute le script de déploiement
-    const deployProcess = exec('sh /opt/app/front/scripts/deploy-back.sh');
+    const deployProcess = exec('sh /opt/app/front/scripts/deploy-front.sh');
 
     // Capture les logs de sortie
     deployProcess.stdout.on('data', data => {
