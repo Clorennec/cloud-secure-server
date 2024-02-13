@@ -1,11 +1,13 @@
 const express = require("express");
-const { exec } = require("child_process")
+const { exec } = require("child_process");
 
 const router = express.Router();
 
-router.post('/deploy/back', (req, res) => {
+const deployScript = (scriptPath, res) => {
     // Exécute le script de déploiement
-    const deployProcess = exec('sh /opt/app/back/scripts/deploy-back.sh');
+    const deployProcess = exec(`sh ${scriptPath}`);
+
+    let errorData = ''; // Variable pour stocker les données d'erreur
 
     // Capture les logs de sortie
     deployProcess.stdout.on('data', data => {
@@ -17,42 +19,31 @@ router.post('/deploy/back', (req, res) => {
     // Gère les erreurs de script
     deployProcess.stderr.on('data', error => {
         console.error('Deployment error:', error);
-        // Renvoie les erreurs à l'application React
-        res.status(500).json({ error: 'Deployment error' });
+        // Ajoute les données d'erreur à la variable errorData
+        errorData += error.toString(); // Convertit les données d'erreur en chaîne de caractères
     });
 
     // Fin de l'exécution du script
     deployProcess.on('close', code => {
         console.log('Deployment process exited with code', code);
-        // Termine la réponse une fois que l'exécution du script est terminée
+        // Si des erreurs sont survenues, envoie une réponse avec le statut 500 et les données d'erreur
+        if (errorData) {
+            res.status(500).json({ error: errorData });
+        } else {
+            // Sinon, envoie une réponse avec le statut 200 et un message de succès
+            res.status(200).json({ message: 'Deployment successful' });
+        }
+        // Signale la fin de l'exécution à l'application React
         res.end();
     });
+};
+
+router.post('/deploy/back', (req, res) => {
+    deployScript('/opt/app/back/scripts/deploy-back.sh', res);
 });
 
 router.post('/deploy/front', (req, res) => {
-    // Exécute le script de déploiement
-    const deployProcess = exec('sh /opt/app/front/scripts/deploy-front.sh');
-
-    // Capture les logs de sortie
-    deployProcess.stdout.on('data', data => {
-        console.log('Deployment log:', data);
-        // Renvoie les logs à l'application React en temps réel
-        res.write(data);
-    });
-
-    // Gère les erreurs de script
-    deployProcess.stderr.on('data', error => {
-        console.error('Deployment error:', error);
-        // Renvoie les erreurs à l'application React
-        res.status(500).json({ error: 'Deployment error' });
-    });
-
-    // Fin de l'exécution du script
-    deployProcess.on('close', code => {
-        console.log('Deployment process exited with code', code);
-        // Termine la réponse une fois que l'exécution du script est terminée
-        res.end();
-    });
+    deployScript('/opt/app/front/scripts/deploy-front.sh', res);
 });
 
 module.exports = router;
