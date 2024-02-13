@@ -4,10 +4,6 @@ const passport = require('passport');
 
 const router = express.Router();
 
-const CLIENT_ID = '1032672210266-m24bvok732iigjq3pfcqq4ip63r0mgs7.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
-const GITHUB_URL = "https://github.com/login/oauth/access_token";
-
 router.get("/login/success", (req, res) => {
 	if (req.user) {
 		res.status(200).json({
