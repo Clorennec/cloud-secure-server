@@ -26,7 +26,7 @@ const deployScript = (scriptPath, res) => {
     deployProcess.on('close', code => {
         console.log('Deployment process exited with code', code);
         // Envoie une réponse avec les données de sortie et d'erreur une fois que l'exécution du script est terminée
-        res.status(code === 0 ? 200 : 500).json({ output: outputData });
+        res.status(200).json({ output: outputData });
         // Signale la fin de l'exécution à l'application React
         res.end();
     });
