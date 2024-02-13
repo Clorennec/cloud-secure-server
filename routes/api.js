@@ -23,7 +23,7 @@ const deployScript = (scriptPath, res) => {
     deployProcess.stderr.on('data', error => {
         console.error('Deployment error:', error);
         // Ajoute les données d'erreur à la variable errorData
-        errorData += error.toString(); // Convertit les données d'erreur en chaîne de caractères
+        res.write(error);
     });
 
     // Fin de l'exécution du script
