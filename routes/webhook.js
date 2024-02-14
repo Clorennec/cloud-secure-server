@@ -5,13 +5,27 @@ const router = express.Router();
 
 // Route pour recevoir le webhook GitHub pour le déploiement du backend
 router.post('/github/deploy/back', (req, res) => {
-    exec(`sh /opt/app/back/scripts/deploy-back.sh`);
+    exec(`sh /opt/app/back/scripts/deploy-back.sh`, (error, stdout, stderr) => {
+        if (error) {
+            console.error('Erreur lors du déploiement du backend:', error);
+            return;
+        }
+        console.log('Output du déploiement du backend:', stdout);
+        console.error('Erreurs du déploiement du backend:', stderr);
+    });
     res.sendStatus(200);
 });
 
 // Route pour recevoir le webhook GitHub pour le déploiement du frontend
 router.post('/github/deploy/front', (req, res) => {
-    exec(`sh /opt/app/front/scripts/deploy-front.sh`);
+    exec(`sh /opt/app/front/scripts/deploy-front.sh`, (error, stdout, stderr) => {
+        if (error) {
+            console.error('Erreur lors du déploiement du frontend:', error);
+            return;
+        }
+        console.log('Output du déploiement du frontend:', stdout);
+        console.error('Erreurs du déploiement du frontend:', stderr);
+    });
     res.sendStatus(200);
 });
 
