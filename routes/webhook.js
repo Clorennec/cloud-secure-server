@@ -7,17 +7,14 @@ const router = express.Router();
 router.post('/github/deploy/back', (req, res) => {
     const deployProcess = exec(`sh /opt/app/back/scripts/deploy-back.sh`);
     
-    // Affiche la sortie du script en temps réel
     deployProcess.stdout.on('data', data => {
         console.log('Output du déploiement du backend:', data);
     });
 
-    // Affiche les erreurs du script en temps réel
     deployProcess.stderr.on('data', error => {
         console.error('Erreurs du déploiement du backend:', error);
     });
 
-    // Gère la fin de l'exécution du script
     deployProcess.on('close', code => {
         console.log('Le script de déploiement du backend s\'est terminé avec le code', code);
     });
@@ -29,17 +26,14 @@ router.post('/github/deploy/back', (req, res) => {
 router.post('/github/deploy/front', (req, res) => {
     const deployProcess = exec(`sh /opt/app/front/scripts/deploy-front.sh`);
 
-    // Affiche la sortie du script en temps réel
     deployProcess.stdout.on('data', data => {
         console.log('Output du déploiement du frontend:', data);
     });
 
-    // Affiche les erreurs du script en temps réel
     deployProcess.stderr.on('data', error => {
         console.error('Erreurs du déploiement du frontend:', error);
     });
 
-    // Gère la fin de l'exécution du script
     deployProcess.on('close', code => {
         console.log('Le script de déploiement du frontend s\'est terminé avec le code', code);
     });
